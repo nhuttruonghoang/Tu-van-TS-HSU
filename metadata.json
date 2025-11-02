@@ -1,0 +1,7 @@
+{
+  "name": "Tư vấn tuyển sinh Đại học Hoa Sen",
+  "description": "Một trợ lý AI cho phép bạn hội thoại bằng tiếng Việt để được tư vấn tuyển sinh về trường Đại học Hoa Sen. Sử dụng Gemini Live API cho trải nghiệm thời gian thực.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
