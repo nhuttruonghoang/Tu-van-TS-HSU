@@ -26,11 +26,18 @@ Luôn trả lời bằng tiếng Việt, giữ thái độ thân thiện, chuyê
 
 **3. HỌC PHÍ DỰ KIẾN NĂM HỌC 2024-2025:**
 - Học phí được tính theo tín chỉ, trung bình một năm học khoảng 75 - 90 triệu VNĐ tùy theo ngành và lộ trình học.
-- Một số ngành tham khảo:
+- Học phí dự kiến cho các ngành đào tạo nổi bật (sắp xếp theo thứ tự bảng chữ cái):
     + Công nghệ thông tin: ~85 triệu VNĐ/năm.
-    + Thiết kế đồ họa: ~90 triệu VNĐ/năm.
-    + Quản trị khách sạn: ~80 triệu VNĐ/năm.
+    + Logistics và Quản lý chuỗi cung ứng: ~84 triệu VNĐ/năm.
+    + Marketing: ~82 triệu VNĐ/năm.
     + Ngôn ngữ Anh: ~78 triệu VNĐ/năm.
+    + Quản trị khách sạn: ~80 triệu VNĐ/năm.
+    + Quản trị kinh doanh: ~82 triệu VNĐ/năm.
+    + Quản trị sự kiện: ~80 triệu VNĐ/năm.
+    + Tâm lý học: ~77 triệu VNĐ/năm.
+    + Thiết kế đồ họa: ~90 triệu VNĐ/năm.
+    + Thiết kế nội thất: ~90 triệu VNĐ/năm.
+    + Thiết kế thời trang: ~90 triệu VNĐ/năm.
 - Lưu ý: Mức học phí này là dự kiến và có thể được điều chỉnh.
 
 **4. CHÍNH SÁCH HỌC BỔNG NĂM 2024:**
@@ -56,9 +63,19 @@ Luôn trả lời bằng tiếng Việt, giữ thái độ thân thiện, chuyê
 
 Khi bắt đầu cuộc hội thoại, hãy chào mừng người dùng và giới thiệu bản thân một cách ngắn gọn. Ví dụ: "Xin chào, tôi là trợ lý tuyển sinh AI của Đại học Hoa Sen. Tôi có thể giúp gì cho bạn?"`;
 
+const LOCAL_STORAGE_KEY = 'hoaSenAIChatHistory';
+
 export const useHoaSenAI = () => {
   const [conversationState, setConversationState] = useState<ConversationState>(ConversationState.IDLE);
-  const [transcript, setTranscript] = useState<TranscriptEntry[]>([]);
+  const [transcript, setTranscript] = useState<TranscriptEntry[]>(() => {
+    try {
+      const savedTranscript = localStorage.getItem(LOCAL_STORAGE_KEY);
+      return savedTranscript ? JSON.parse(savedTranscript) : [];
+    } catch (error) {
+      console.error('Không thể tải lịch sử hội thoại từ localStorage', error);
+      return [];
+    }
+  });
   const [error, setError] = useState<string | null>(null);
 
   // FIX: Using `any` because `LiveSession` type is not exported from the library.
@@ -74,6 +91,14 @@ export const useHoaSenAI = () => {
   const currentOutputTranscriptionRef = useRef('');
   const nextStartTimeRef = useRef(0);
   const audioSourcesRef = useRef<Set<AudioBufferSourceNode>>(new Set());
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(transcript));
+    } catch (error) {
+      console.error('Không thể lưu lịch sử hội thoại vào localStorage', error);
+    }
+  }, [transcript]);
 
   const cleanup = useCallback(() => {
     scriptProcessorRef.current?.disconnect();
